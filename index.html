@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ABLE - Built for Ability</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;700;900&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              ableTeal: '#2DD4BF',
+              ableBlue: '#3B82F6',
+              ablePurple: '#A855F7',
+              ableSky: '#0EA5E9',
+              ableRed: '#EF4444',
+              ableBlack: '#171717',
+              ableSlate: '#404040'
+            },
+            borderRadius: {
+              'xl-thick': '2rem',
+              'huge': '4rem',
+            },
+            boxShadow: {
+              'huge': '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+              'glow': '0 0 20px rgba(45, 212, 191, 0.3)',
+            },
+            animation: {
+              'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'synapse': 'synapse 2s ease-in-out infinite',
+            },
+            keyframes: {
+              synapse: {
+                '0%, 100%': { opacity: 1, transform: 'scale(1)' },
+                '50%': { opacity: 0.5, transform: 'scale(0.95)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+        :root {
+          --able-primary: #2DD4BF; /* Calm Teal as primary */
+          --able-secondary: #3B82F6;
+          --able-accent: #A855F7;
+        }
+        
+        body { 
+          font-family: 'Lexend', sans-serif; 
+          min-height: 100%;
+          width: 100%;
+          margin: 0;
+          transition: background-color 0.5s ease, color 0.5s ease;
+          overscroll-behavior: none;
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Support for Dark Mode and Light Mode via Class */
+        body.dark {
+          background-color: #171717;
+          color: #FFFFFF;
+        }
+        body:not(.dark) {
+          background-color: #F8FAFC;
+          color: #1E293B;
+        }
+
+        #root {
+          height: 100%;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+        }
+
+        .text-ableTeal { color: var(--able-primary) !important; }
+        .bg-ableTeal { background-color: var(--able-primary) !important; }
+        .border-ableTeal { border-color: var(--able-primary) !important; }
+
+        .text-ablePurple { color: var(--able-secondary) !important; }
+        .bg-ablePurple { background-color: var(--able-secondary) !important; }
+        .border-ablePurple { border-color: var(--able-secondary) !important; }
+
+        .text-ableBlue { color: var(--able-secondary) !important; }
+        .bg-ableBlue { background-color: var(--able-secondary) !important; }
+
+        .text-ableSky { color: var(--able-accent) !important; }
+        .bg-ableSky { background-color: var(--able-accent) !important; }
+        .border-ableSky { border-color: var(--able-accent) !important; }
+
+        /* Dynamic Spacing Override */
+        .btn-dna {
+          padding: var(--able-btn-padding) !important;
+        }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--able-primary); border-radius: 10px; opacity: 0.3; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Momentum scrolling for iOS */
+        .scroll-container {
+          -webkit-overflow-scrolling: touch;
+          scroll-behavior: smooth;
+        }
+
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        .animate-shimmer { animation: shimmer 2s infinite linear; }
+        
+        .high-focus * { 
+          animation: none !important; 
+          transition: none !important; 
+          box-shadow: none !important; 
+        }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 768px) {
+          :root {
+            --font-size-base: 14px;
+          }
+          body {
+            font-size: var(--font-size-base);
+          }
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="dark transition-all duration-300 selection:bg-ableTeal selection:text-ableBlack">
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

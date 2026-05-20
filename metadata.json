@@ -1,0 +1,9 @@
+{
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ],
+  "name": "ABLE",
+  "description": "MADE TO FIT YOU ;-)"
+}

@@ -1,0 +1,14 @@
+/* Global Styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --able-glow: rgba(45, 212, 191, 0.3);
+  }
+}
+
+.shadow-glow {
+  box-shadow: 0 0 20px var(--able-glow);
+}
