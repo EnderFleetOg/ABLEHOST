@@ -80,7 +80,13 @@ const CommHub: React.FC = () => {
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
       outputAudioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
       
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      });
       
       const sessionPromise = ai.live.connect({
         model: 'gemini-2.5-flash-native-audio-preview-12-2025',
@@ -92,6 +98,10 @@ const CommHub: React.FC = () => {
             const source = audioContextRef.current!.createMediaStreamSource(stream);
             const scriptProcessor = audioContextRef.current!.createScriptProcessor(4096, 1, 1);
             scriptProcessor.onaudioprocess = (e) => {
+              if (sourcesRef.current.size > 0) {
+                // ABLE is speaking, ignore microphone input to prevent echoing/feedback loop interruption!
+                return;
+              }
               const inputData = e.inputBuffer.getChannelData(0);
               const pcmBlob = createBlob(inputData);
               sessionPromise.then(session => {
@@ -123,9 +133,8 @@ const CommHub: React.FC = () => {
               currentInputTranscriptionRef.current = '';
               currentOutputTranscriptionRef.current = '';
 
-              // Stop mic after turn is complete as per user request
-              stopLiveSession();
-              setIfiStatus('Turn Complete - Mic Off');
+              // Keep live session alive! Do not stop it, allowing continuous hands-free voice chat
+              setIfiStatus('Listening...');
             }
 
             const audioData = message.serverContent?.modelTurn?.parts[0]?.inlineData?.data;
@@ -458,25 +467,48 @@ const CommHub: React.FC = () => {
                 )}
               </div>
 
-              <div className="flex flex-col items-center gap-2 relative z-10">
-                <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={isLiveActive ? stopLiveSession : startLiveSession}
-                  className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl shadow-huge transition-all relative overflow-hidden group/btn ${isLiveActive ? 'bg-ableRed' : 'bg-ablePurple shadow-ablePurple/40'}`}
-                >
+              <div className="flex flex-col items-center gap-4 relative z-10 py-4 border-t border-white/5 mt-4">
+                <div className="relative flex items-center justify-center">
                   {isLiveActive && (
-                    <motion.div 
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                      className="absolute inset-0 bg-white opacity-10"
-                    />
+                    <>
+                      <motion.div 
+                        initial={{ opacity: 0.4, scale: 0.8 }}
+                        animate={{ opacity: 0, scale: 2.2 }}
+                        transition={{ repeat: Infinity, duration: 2, ease: "easeOut" }}
+                        className="absolute w-20 h-20 rounded-full bg-ablePurple/30 border border-ablePurple/50 pointer-events-none"
+                      />
+                      <motion.div 
+                        initial={{ opacity: 0.3, scale: 0.8 }}
+                        animate={{ opacity: 0, scale: 1.8 }}
+                        transition={{ repeat: Infinity, duration: 2, delay: 0.6, ease: "easeOut" }}
+                        className="absolute w-20 h-20 rounded-full bg-ableTeal/20 border border-ableTeal/30 pointer-events-none"
+                      />
+                    </>
                   )}
-                  <span className="relative z-10">{isLiveActive ? '⏹' : '🎙️'}</span>
-                </motion.button>
-                <p className={`text-[8px] font-black uppercase tracking-[0.3em] transition-colors duration-500 text-center ${isLiveActive ? 'text-ableRed' : 'text-ablePurple opacity-60'}`}>
-                  {isLiveActive ? 'LISTENING...' : 'TAP TO TALK'}
-                </p>
+                  <motion.button 
+                    whileHover={{ scale: 1.08 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={isLiveActive ? stopLiveSession : startLiveSession}
+                    className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-huge transition-all relative overflow-hidden group/btn z-10 border-4 border-white/20 hover:border-white/40 ${isLiveActive ? 'bg-ableRed animate-pulse' : 'bg-ablePurple shadow-ablePurple/40'}`}
+                  >
+                    {isLiveActive && (
+                      <motion.div 
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                        className="absolute inset-0 bg-white opacity-10"
+                      />
+                    )}
+                    <span className="relative z-10">{isLiveActive ? '⏹' : '🎙️'}</span>
+                  </motion.button>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <p className={`text-[10px] font-black uppercase tracking-[0.4em] transition-colors duration-500 text-center ${isLiveActive ? 'text-ableTeal animate-pulse' : 'text-ablePurple opacity-60'}`}>
+                    {isLiveActive ? 'Voice Live & Listening' : 'Tap to Start Face-to-Face Voice Chat'}
+                  </p>
+                  <p className="text-[8px] font-bold text-white/30 tracking-widest uppercase text-center max-w-xs">
+                    {isLiveActive ? 'Speak naturally. ABLE listens and replies automatically hands-free.' : 'Bi-directional audio pipeline'}
+                  </p>
+                </div>
               </div>
             </section>
           </motion.div>

@@ -104,7 +104,13 @@ const AICompanion: React.FC = () => {
       inputAudioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
       outputAudioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
       
-      const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const audioStream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      });
       
       const sessionPromise = ai.live.connect({
         model: 'gemini-2.5-flash-native-audio-preview-12-2025',
@@ -116,6 +122,10 @@ const AICompanion: React.FC = () => {
             const source = inputAudioContextRef.current!.createMediaStreamSource(audioStream);
             const scriptProcessor = inputAudioContextRef.current!.createScriptProcessor(4096, 1, 1);
             scriptProcessor.onaudioprocess = (e) => {
+              if (sourcesRef.current.size > 0) {
+                // Skip sending mic input when ABLE is actively speaking to prevent echo/feedback loop interruption
+                return;
+              }
               const inputData = e.inputBuffer.getChannelData(0);
               sessionPromise.then(s => s.sendRealtimeInput({ media: createBlob(inputData) }));
             };
@@ -203,19 +213,20 @@ const AICompanion: React.FC = () => {
             if (message.serverContent?.turnComplete) {
               const finalInput = accumulatedInputRef.current;
               const finalOutput = cleanAndLimitResponse(accumulatedOutputRef.current);
-              if (finalInput) {
-                setHistory(prev => [...prev, { role: 'user', text: finalInput }]);
-              }
-              if (finalOutput) {
-                setPendingResponse(finalOutput);
+              if (finalInput || finalOutput) {
+                setHistory(prev => [
+                  ...prev,
+                  ...(finalInput ? [{ role: 'user' as const, text: finalInput }] : []),
+                  ...(finalOutput ? [{ role: 'assistant' as const, text: finalOutput }] : [])
+                ]);
               }
               accumulatedInputRef.current = '';
               accumulatedOutputRef.current = '';
               setCurrentInputText('');
               setCurrentOutputText('');
               
-              stopLiveSession();
-              setStatus('RESPONSE READY');
+              // Keep live session alive! Do not stop it, allowing continuous listening
+              setStatus('LISTENING');
             }
           },
           onerror: (e) => stopLiveSession(true),
