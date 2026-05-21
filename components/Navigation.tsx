@@ -15,7 +15,7 @@ interface NavigationProps {
 }
 
 const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab, onEmergency }) => {
-  const { toggleHighContrast, isHighContrast, speak, logout, user, searchQuery, setSearchQuery, notifications, pad, updatePAD } = useAbility();
+  const { toggleHighContrast, isHighContrast, speak, logout, user, searchQuery, setSearchQuery, notifications, pad, updatePAD, t } = useAbility();
   const [isListening, setIsListening] = useState(false);
   const [isAccessibilityOpen, setIsAccessibilityOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -50,8 +50,8 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab, onEmer
           { id: 'voice', label: 'COMM', icon: '🎙️' },
           { id: 'explorer', label: 'EXPLORE', icon: '🗺️' },
           { id: 'market', label: 'SHOP', icon: '🛒' },
-          { id: 'career', label: 'GROWTH', icon: '📈' },
-          { id: 'dna', label: 'DNA', icon: '🧬' }
+          { id: 'career', label: 'GROWTH', icon: '✊' },
+          { id: 'dna', label: 'ABILITIES', icon: '🧬' }
         ];
     }
   }, [user?.role]);
@@ -136,7 +136,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab, onEmer
               type="text" 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search..."
+              placeholder={t("Search") + "..."}
               className={`w-full bg-white/5 border border-white/10 rounded-lg md:rounded-xl py-1.5 md:py-2 pl-7 md:pl-10 pr-2 md:pr-3 text-[10px] md:text-xs font-black text-white placeholder-white/20 outline-none transition-all ${user?.role === UserRole.Specialist ? 'focus:border-ableSky' : 'focus:border-[var(--able-primary)]'} focus:bg-white/10`}
             />
           </div>
@@ -203,7 +203,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab, onEmer
               onClick={onEmergency} 
               className="bg-ableRed text-white h-8 md:h-10 px-3 md:px-4 rounded-lg md:rounded-xl font-black shadow-huge text-[10px] md:text-xs border border-white/20 btn-dna"
             >
-              SOS
+              {t("SOS")}
             </motion.button>
           )}
         </div>
@@ -236,7 +236,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab, onEmer
                 />
               )}
               <span className="text-sm md:text-lg relative z-10">{tab.icon}</span>
-              <span className="text-[6px] md:text-[7px] font-black tracking-widest uppercase relative z-10">{tab.label}</span>
+              <span className="text-[6px] md:text-[7px] font-black tracking-widest uppercase relative z-10">{t(tab.label)}</span>
             </motion.button>
           ))}
         </div>

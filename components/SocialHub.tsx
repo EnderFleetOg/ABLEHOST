@@ -31,6 +31,7 @@ const CommHub: React.FC = () => {
   const [chatInput, setChatInput] = useState('');
   const [isThinking, setIsThinking] = useState(false);
   const [pendingResponse, setPendingResponse] = useState<string | null>(null);
+  const [ttsText, setTtsText] = useState('');
   
   const audioContextRef = useRef<AudioContext | null>(null);
   const outputAudioContextRef = useRef<AudioContext | null>(null);
@@ -120,7 +121,24 @@ const CommHub: React.FC = () => {
 
             if (message.serverContent?.turnComplete) {
               const userText = currentInputTranscriptionRef.current;
-              const assistantText = cleanAndLimitResponse(currentOutputTranscriptionRef.current);
+              let assistantText = cleanAndLimitResponse(currentOutputTranscriptionRef.current);
+              
+              const userLower = userText.toLowerCase();
+              if (userLower.includes('water') || userLower.includes('item') || userLower.includes('bottle') || userLower.includes('drink') || userLower.includes('food')) {
+                speak("I am connecting to your mentor.");
+                assistantText = "I am connecting to your mentor.";
+                for (const source of sourcesRef.current) {
+                  try { source.stop(); } catch(e) {}
+                }
+                sourcesRef.current.clear();
+              } else if (userLower.includes('creator') || userLower.includes('who created you') || userLower.includes('who is your creator') || userLower.includes('made you')) {
+                speak("Naksh.");
+                assistantText = "Naksh.";
+                for (const source of sourcesRef.current) {
+                  try { source.stop(); } catch(e) {}
+                }
+                sourcesRef.current.clear();
+              }
               
               if (userText || assistantText) {
                 setHistory(prev => [
@@ -184,6 +202,20 @@ const CommHub: React.FC = () => {
     const input = chatInput;
     setChatInput('');
     setIsThinking(true);
+
+    const normalizedInput = input.toLowerCase().trim();
+    if (normalizedInput.includes('water') || normalizedInput.includes('item') || normalizedInput.includes('bottle') || normalizedInput.includes('drink') || normalizedInput.includes('food')) {
+      const response = "I am connecting to your mentor.";
+      setPendingResponse(response);
+      setIsThinking(false);
+      return;
+    }
+    if (normalizedInput.includes('creator') || normalizedInput.includes('who created you') || normalizedInput.includes('who is your creator') || normalizedInput.includes('made you')) {
+      const response = "Naksh.";
+      setPendingResponse(response);
+      setIsThinking(false);
+      return;
+    }
 
     if (!isOnline) {
       setTimeout(() => {
@@ -392,6 +424,30 @@ const CommHub: React.FC = () => {
                   className="w-full py-2.5 bg-white text-ableBlack rounded-xl font-black text-sm shadow-huge"
                 >
                   SEND
+                </motion.button>
+              </div>
+
+              <div className="pt-4 border-t-2 border-white/5 relative z-10 space-y-2">
+                <h4 className="text-[10px] font-black text-ableTeal uppercase tracking-widest">Text-To-Speech Box</h4>
+                <textarea 
+                  value={ttsText}
+                  onChange={(e) => setTtsText(e.target.value)}
+                  placeholder="Type any text here to speak it out loud..."
+                  className="w-full h-20 bg-black/40 border-2 border-white/20 rounded-xl px-4 py-2 text-sm font-medium outline-none focus:border-ableTeal transition-all placeholder:text-white/20 resize-none text-white font-bold"
+                />
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    if (ttsText.trim()) {
+                      speak(ttsText);
+                    } else {
+                      speak("Write some text first.");
+                    }
+                  }} 
+                  className="w-full py-3 bg-ableTeal text-ableBlack rounded-xl font-black text-sm shadow-huge uppercase tracking-wider flex items-center justify-center gap-2"
+                >
+                  📢 Speak Out Loud
                 </motion.button>
               </div>
             </section>

@@ -58,7 +58,7 @@ const CareerHub: React.FC = () => {
           transition={{ delay: 0.2 }}
           className="text-2xl font-bold text-white/50 max-w-2xl leading-tight"
         >
-          Your Personal Accessibility DNA is a professional superpower. We align your traits with roles that value your unique perspective.
+          Your unique profile of abilities is a professional superpower. We align your traits with roles that value your unique perspective.
         </motion.p>
         
         <motion.div 
@@ -86,7 +86,7 @@ const CareerHub: React.FC = () => {
                   <div className="w-5 h-5 border-4 border-ableBlack border-t-transparent rounded-full animate-spin"></div>
                   <span>SCANNING...</span>
                 </div>
-              ) : 'ALIGN DNA'}
+              ) : 'ALIGN MY SKILLS'}
             </button>
           </div>
         </motion.div>
@@ -127,7 +127,7 @@ const CareerHub: React.FC = () => {
           >
             {/* Visual DNA Match Score */}
             <div className="absolute top-0 right-0 p-8 flex flex-col items-end">
-              <div className="text-[8px] font-black text-white/30 tracking-[0.4em] uppercase mb-1">DNA Match</div>
+              <div className="text-[8px] font-black text-white/30 tracking-[0.4em] uppercase mb-1">Skills Match</div>
               <div className="text-4xl font-black text-ableTeal italic flex items-baseline">
                 {path.compatibility}
                 <span className="text-sm not-italic opacity-40 ml-1">%</span>
@@ -175,7 +175,7 @@ const CareerHub: React.FC = () => {
               </div>
 
               <button className="w-full py-6 bg-white text-ableBlack rounded-[2rem] font-black text-xl shadow-xl hover:bg-ableTeal transition-all active:scale-95 flex items-center justify-center gap-4 group/btn overflow-hidden relative">
-                <span className="relative z-10">LOCK IN ROLE DNA</span>
+                <span className="relative z-10">CHOOSE ROLE</span>
                 <div className="w-6 h-6 bg-ableBlack rounded-full flex items-center justify-center text-[10px] text-white group-hover/btn:translate-x-2 transition-transform relative z-10">→</div>
               </button>
             </div>
@@ -185,7 +185,7 @@ const CareerHub: React.FC = () => {
 
       <footer className="pt-20 text-center">
         <div className="inline-block p-12 border-4 border-white/5 rounded-huge bg-white/2 ring-8 ring-white/1">
-          <h4 className="text-2xl font-black text-white/40 italic uppercase tracking-tighter mb-4">DNA ARCHIVE PROTECTED</h4>
+          <h4 className="text-2xl font-black text-white/40 italic uppercase tracking-tighter mb-4">PROFILE ARCHIVE SECURED</h4>
           <p className="text-xs font-medium text-white/20 max-w-sm mx-auto uppercase tracking-widest leading-loose">
             All career matching is performed locally within your secure ability buffer. Data remains yours. Forever.
           </p>

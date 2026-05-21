@@ -57,7 +57,7 @@ const EmergencySystem: React.FC<EmergencySystemProps> = ({ onClose }) => {
     setShowConfirm(false);
     if (confirmType === 'silent') {
       setIsSilent(true);
-      speak("Silent SOS activated. Automatically sharing location and Ability DNA with your circle.");
+      speak("Silent SOS activated. Automatically sharing location and safety needs with your circle.");
       autoBroadcast();
     } else if (confirmType === 'contact' && targetContactIdx !== null) {
       const idx = targetContactIdx;
@@ -142,7 +142,7 @@ const EmergencySystem: React.FC<EmergencySystemProps> = ({ onClose }) => {
                   </h3>
                   <p className="text-sm font-medium leading-relaxed text-white/70 uppercase tracking-wide">
                     {confirmType === 'silent' 
-                      ? 'Are you sure you want to activate Silent SOS? This will immediately broadcast your real-time location and Ability DNA to your entire circle in stealth mode.'
+                      ? 'Are you sure you want to activate Silent SOS? This will immediately broadcast your real-time location and abilities profile to your entire circle in stealth mode.'
                       : `Are you sure you want to alert ${targetContactIdx !== null ? pad.emergencyContacts[targetContactIdx]?.name : 'your contact'} immediately?`}
                   </p>
                 </div>
@@ -292,7 +292,7 @@ const EmergencySystem: React.FC<EmergencySystemProps> = ({ onClose }) => {
                         <div className="mt-4 flex items-center gap-2">
                           <div className={`w-3 h-3 bg-emerald-500 rounded-full ${isBroadcasting ? 'animate-ping' : ''}`}></div>
                           <span className="text-[10px] font-black uppercase tracking-widest opacity-60">
-                            {isBroadcasting ? 'TRANSMITTING DNA DATA...' : 'DNA BROADCAST READY'}
+                            {isBroadcasting ? 'TRANSMITTING SAFETY PROFILE...' : 'BROADCAST READY'}
                           </span>
                         </div>
                      </div>

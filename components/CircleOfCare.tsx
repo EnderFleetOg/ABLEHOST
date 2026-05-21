@@ -24,7 +24,7 @@ const CircleOfCare: React.FC = () => {
   const handleMemberAction = (member: CircleMember) => {
     const text = member.role === UserRole.HomeMember 
       ? `Alerting your support lead, ${member.name}. They are synced to your current needs.` 
-      : `Requesting guidance session with ${member.name}. Your Ability DNA is already shared.`;
+      : `Requesting guidance session with ${member.name}. Your abilities profile is already shared.`;
     speak(text);
   };
 
@@ -82,7 +82,7 @@ const CircleOfCare: React.FC = () => {
           transition={{ delay: 0.2 }}
           className="text-2xl font-bold text-white/60 max-w-3xl leading-snug"
         >
-          Family, friends, and specialists. One unified loop where everyone speaks your language and understands your DNA.
+          Family, friends, and specialists. One unified loop where everyone speaks your language and understands your needs.
         </motion.p>
         
         <div className="flex flex-wrap gap-4 pt-4">
@@ -114,7 +114,7 @@ const CircleOfCare: React.FC = () => {
           <div className="text-7xl group-hover:scale-125 transition-transform duration-500">🤝</div>
           <div className="space-y-2">
             <h3 className="text-3xl font-black text-white uppercase">Sync Member</h3>
-            <p className="text-xs font-black text-white/30 uppercase tracking-[0.2em]">Add to your core DNA loop</p>
+            <p className="text-xs font-black text-white/30 uppercase tracking-[0.2em]">Add to your core support loop</p>
           </div>
         </motion.button>
 
@@ -192,7 +192,7 @@ const CircleOfCare: React.FC = () => {
           </div>
           <div className="flex items-center gap-4 bg-emerald-500/20 border-2 border-emerald-500/30 px-8 py-4 rounded-3xl">
             <div className="w-4 h-4 bg-emerald-500 rounded-full animate-pulse"></div>
-            <span className="text-xs font-black text-emerald-500 uppercase tracking-[0.3em]">Circle DNA Online</span>
+            <span className="text-xs font-black text-emerald-500 uppercase tracking-[0.3em]">Support Loop Online</span>
           </div>
         </div>
       </motion.section>

@@ -167,7 +167,7 @@ const AppContent: React.FC = () => {
     if (user?.role === UserRole.Mentor) return <MentorPortal tab={activeTab} />;
 
     switch (activeTab) {
-      case 'dashboard': return <Dashboard />;
+      case 'dashboard': return <Dashboard setActiveTab={setActiveTab} onEmergency={() => setShowEmergency(true)} />;
       case 'vision': return <VisionAI />;
       case 'voice': return <CommHub />;
       case 'explorer': return <MapExplorer />;
@@ -175,7 +175,7 @@ const AppContent: React.FC = () => {
       case 'career': return <CareerHub />;
       case 'dna': return <PADSettings />;
       case 'info': return <InfoPage />;
-      default: return <Dashboard />;
+      default: return <Dashboard setActiveTab={setActiveTab} onEmergency={() => setShowEmergency(true)} />;
     }
   };
 

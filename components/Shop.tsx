@@ -10,7 +10,7 @@ const Shop: React.FC = () => {
   const filteredExperts = MOCK_SHOP_EXPERTS.filter(e => filter === 'All' || e.role === filter);
 
   const handleHire = (name: string, specialty: string) => {
-    speak(`Initiating hire request for ${name}, your ${specialty} specialist. Synchronizing your Ability DNA for onboarding.`);
+    speak(`Initiating hire request for ${name}, your ${specialty} specialist. Synchronizing your accessibility profile for onboarding.`);
     alert(`HIRE REQUEST SENT: ${name} will contact you shortly.`);
   };
 
@@ -23,7 +23,7 @@ const Shop: React.FC = () => {
         </div>
         <h1 className="text-6xl font-black tracking-tighter text-white uppercase">Professional Care.</h1>
         <p className="text-2xl text-white/60 leading-relaxed font-bold max-w-2xl">
-          Hire specialized mentors and doctors who understand the ABLE framework. Every expert is synced to your DNA.
+          Hire specialized mentors and doctors who understand the ABLE framework. Every expert is synced to your needs.
         </p>
         
         <div className="flex bg-white/5 border-4 border-white/10 p-2 rounded-3xl w-fit shadow-2xl">

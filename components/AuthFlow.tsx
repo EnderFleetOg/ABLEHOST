@@ -29,7 +29,7 @@ const AuthFlow: React.FC = () => {
       }
       const success = register(email, password, name, role);
       if (success) {
-        speak(`DNA synchronized. Welcome ${name}! Your ${role} profile is active.`);
+        speak(`Profile synchronized. Welcome ${name}! Your ${role} profile is active.`);
       }
     } else {
       if (!email || !password) {
@@ -38,7 +38,7 @@ const AuthFlow: React.FC = () => {
       }
       const success = login(email, password);
       if (success) {
-        speak("Access granted. Syncing Ability DNA.");
+        speak("Access granted. Syncing ability profile.");
       }
     }
   };
@@ -205,7 +205,7 @@ const AuthFlow: React.FC = () => {
                 type="submit"
                 className="w-full py-5 md:py-6 bg-white text-ableBlack rounded-2xl md:rounded-huge font-black text-xl md:text-2xl shadow-huge hover:bg-ableTeal transition-all relative overflow-hidden group"
               >
-                <span className="relative z-10">{mode === 'login' ? 'ENTER ABLE' : 'SYNC DNA'}</span>
+                <span className="relative z-10">{mode === 'login' ? 'ENTER ABLE' : 'CREATE PROFILE'}</span>
                 <motion.div 
                   className="absolute inset-0 bg-ableTeal opacity-0 group-hover:opacity-100 transition-opacity"
                 />

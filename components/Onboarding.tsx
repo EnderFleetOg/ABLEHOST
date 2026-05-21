@@ -58,7 +58,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
           <div className="space-y-12 animate-in slide-in-from-right-12">
             {role === UserRole.User ? (
               <>
-                <h2 className="text-4xl font-black text-center text-white italic uppercase tracking-tighter">Set Your DNA.</h2>
+                <h2 className="text-4xl font-black text-center text-white italic uppercase tracking-tighter">Set Your Profile.</h2>
                 <div className="space-y-8">
                   <div className="space-y-4">
                     <p className="text-[10px] font-black text-ableTeal uppercase tracking-[0.4em]">Visual Perspective</p>

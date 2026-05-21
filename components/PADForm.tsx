@@ -4,7 +4,7 @@ import { useAbility } from '../context/AbilityContext';
 import { VisualAbility, VoicePreference, CognitiveMode, ColorPalette } from '../types';
 
 const PADForm: React.FC = () => {
-  const { pad, updatePAD, speak, uiIntensity } = useAbility();
+  const { pad, updatePAD, speak, uiIntensity, t } = useAbility();
   const [newContactName, setNewContactName] = useState('');
   const [newContactPhone, setNewContactPhone] = useState('');
   const [isDictating, setIsDictating] = useState<string | null>(null);
@@ -56,8 +56,8 @@ const PADForm: React.FC = () => {
   return (
     <div className={`max-w-4xl mx-auto space-y-12 py-10 animate-in fade-in duration-700 pb-32 ${uiIntensity === 'simplified' ? 'px-4' : ''}`}>
       <header className="space-y-1">
-        <h2 className="text-3xl font-black text-ableTeal tracking-tighter uppercase italic">Ability DNA.</h2>
-        <p className="text-lg font-bold opacity-60">Your unique blueprint for interaction.</p>
+        <h2 className="text-3xl font-black text-ableTeal tracking-tighter uppercase italic">{t("Your Abilities.")}</h2>
+        <p className="text-lg font-bold opacity-60">{t("Your unique profile settings for interaction.")}</p>
       </header>
 
       <div className="space-y-12">
@@ -89,7 +89,7 @@ const PADForm: React.FC = () => {
             <div className="flex justify-between items-center">
               <label className="text-sm font-black text-white/60 tracking-wider">SPEECH RATE ({Math.round(pad.speechRate * 100)}%)</label>
               <button 
-                onClick={() => speak("Testing current speaking speed. Is this pace suitable for your Ability DNA?")}
+                onClick={() => speak("Testing current speaking speed. Is this pace suitable for your abilities?")}
                 className="text-ableTeal font-black text-xs uppercase underline tracking-widest hover:text-white transition-colors"
               >
                 Test Speed
@@ -301,7 +301,7 @@ const PADForm: React.FC = () => {
             <div className="space-y-4">
               <div className="flex justify-between items-center text-[10px] font-black text-white/40 uppercase tracking-widest">
                 <span>Color Grid (Quick Swatches)</span>
-                <span className="text-ableTeal italic">DNA Verified</span>
+                <span className="text-ableTeal italic">Verified</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {['#2DD4BF', '#FFD700', '#FF4D4D', '#FFA500', '#A855F7', '#38BDF8', '#E6E6FA', '#F43F5E', '#10B981', '#F59E0B'].map(hex => (
@@ -360,8 +360,8 @@ const PADForm: React.FC = () => {
           </div>
         </section>
 
-        <button onClick={() => speak("DNA synchronization confirmed.")} className="w-full bg-white text-ableBlack py-4 rounded-3xl font-black text-xl shadow-huge hover:bg-ableTeal transition-all active:scale-95 border-4 border-ableTeal">
-          SAVE DNA
+        <button onClick={() => speak("Settings saved successfully.")} className="w-full bg-white text-ableBlack py-4 rounded-3xl font-black text-xl shadow-huge hover:bg-ableTeal transition-all active:scale-95 border-4 border-ableTeal">
+          {t("SAVE SETTINGS")}
         </button>
       </div>
     </div>

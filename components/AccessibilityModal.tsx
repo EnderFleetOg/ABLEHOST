@@ -4,6 +4,7 @@ import { useAbility } from '../context/AbilityContext';
 import { VisionNeed, CognitiveMode, VoicePreference } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import EmergencyQR from './EmergencyQR';
+import { LANGUAGES } from '../data/languages';
 
 interface AccessibilityModalProps {
   isOpen: boolean;
@@ -11,8 +12,15 @@ interface AccessibilityModalProps {
 }
 
 const AccessibilityModal: React.FC<AccessibilityModalProps> = ({ isOpen, onClose }) => {
-  const { pad, updatePAD, isHighContrast, toggleHighContrast, speak } = useAbility();
+  const { pad, updatePAD, isHighContrast, toggleHighContrast, speak, t } = useAbility();
   const [showQR, setShowQR] = useState(false);
+  const [langQuery, setLangQuery] = useState('');
+
+  const filteredLangs = LANGUAGES.filter(l => 
+    l.name.toLowerCase().includes(langQuery.toLowerCase()) || 
+    l.nativeName.toLowerCase().includes(langQuery.toLowerCase()) || 
+    l.region.toLowerCase().includes(langQuery.toLowerCase())
+  ).slice(0, 30);
 
   if (!isOpen) return null;
 
@@ -35,12 +43,12 @@ const AccessibilityModal: React.FC<AccessibilityModalProps> = ({ isOpen, onClose
         >
           <div className="p-8 border-b-4 border-white/10 flex justify-between items-center">
             <div className="flex items-center gap-4">
-              <h2 className="text-4xl font-black text-ableTeal italic uppercase tracking-tighter">Accessibility DNA</h2>
+              <h2 className="text-4xl font-black text-ableTeal italic uppercase tracking-tighter">{t("Accessibility DNA")}</h2>
               <button 
                 onClick={() => setShowQR(true)}
                 className="bg-ableRed text-white px-4 py-2 rounded-xl font-black text-xs uppercase tracking-widest shadow-glow active:scale-95 transition-all flex items-center gap-2"
               >
-                <span>🆘</span> OPEN QR
+                <span>🆘</span> {t("OPEN QR")}
               </button>
             </div>
             <button onClick={onClose} className="text-white/40 hover:text-white transition-colors">
@@ -58,14 +66,14 @@ const AccessibilityModal: React.FC<AccessibilityModalProps> = ({ isOpen, onClose
             </AnimatePresence>
             {/* Visual Settings */}
             <section className="space-y-6">
-              <h3 className="text-xs font-black uppercase tracking-[0.3em] text-white/30">Visual Experience</h3>
+              <h3 className="text-xs font-black uppercase tracking-[0.3em] text-white/30">{t("Visual Experience")}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <button 
                   onClick={toggleHighContrast}
                   className={`p-6 rounded-3xl border-4 transition-all flex flex-col items-center gap-2 ${isHighContrast ? 'border-ableTeal bg-ableTeal text-ableBlack' : 'border-white/10 bg-white/5 text-white'}`}
                 >
                   <span className="text-3xl">🌓</span>
-                  <span className="font-black uppercase text-sm">High Contrast</span>
+                  <span className="font-black uppercase text-sm">{t("High Contrast")}</span>
                 </button>
                 <button 
                   onClick={() => {
@@ -77,12 +85,12 @@ const AccessibilityModal: React.FC<AccessibilityModalProps> = ({ isOpen, onClose
                   className={`p-6 rounded-3xl border-4 transition-all flex flex-col items-center gap-2 ${pad.fontSize && pad.fontSize !== 'standard' ? 'border-ableTeal bg-ableTeal text-ableBlack' : 'border-white/10 bg-white/5 text-white'}`}
                 >
                   <span className="text-3xl">🔤</span>
-                  <span className="font-black uppercase text-[10px]">Text Size: {pad.fontSize || 'standard'}</span>
+                  <span className="font-black uppercase text-[10px]">{t("Text Size")}: {t(pad.fontSize || 'standard')}</span>
                 </button>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-white/40">Vision Need</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-white/40">{t("Vision Need")}</label>
                 <div className="grid grid-cols-3 gap-2">
                   {[VisionNeed.Standard, VisionNeed.LowVision, VisionNeed.Blind].map(need => (
                     <button
@@ -90,7 +98,7 @@ const AccessibilityModal: React.FC<AccessibilityModalProps> = ({ isOpen, onClose
                       onClick={() => updatePAD({ vision: need })}
                       className={`py-3 rounded-xl border-2 font-black uppercase text-[10px] transition-all ${pad.vision === need ? 'border-ableTeal bg-ableTeal/20 text-ableTeal' : 'border-white/10 text-white/40'}`}
                     >
-                      {need}
+                      {t(need)}
                     </button>
                   ))}
                 </div>
@@ -160,6 +168,81 @@ const AccessibilityModal: React.FC<AccessibilityModalProps> = ({ isOpen, onClose
                     {pad.cognitive === mode && <span>✓</span>}
                   </button>
                 ))}
+                </div>
+              </div>
+            </section>
+
+            {/* Real-Time Language & Translation (1,000+ Languages) */}
+            <section className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xs font-black uppercase tracking-[0.3em] text-white/30">{t("Real-Time Translation")}</h3>
+                <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full animate-pulse flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  {t("1,050+ Languages Active")}
+                </span>
+              </div>
+              <div className="space-y-4">
+                <div className="relative">
+                  <input 
+                    type="text"
+                    value={langQuery}
+                    onChange={(e) => setLangQuery(e.target.value)}
+                    placeholder={t("Search 1,000+ languages & dialects (e.g., Navajo, Welsh)") + "..."}
+                    className="w-full bg-white/5 border-2 border-white/10 rounded-2xl py-3 px-4 pl-10 text-xs font-black text-white placeholder-white/20 outline-none focus:border-ableTeal transition-all"
+                  />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span className="text-sm">🔍</span>
+                  </div>
+                  {langQuery && (
+                    <button 
+                      onClick={() => setLangQuery('')}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-white/40 hover:text-white"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+
+                <div className="bg-white/5 border-2 border-white/10 rounded-2xl max-h-64 overflow-y-auto no-scrollbar divide-y divide-white/10">
+                  {filteredLangs.length > 0 ? (
+                    filteredLangs.map(lang => {
+                      const isSelected = pad.primaryLanguage === lang.code;
+                      return (
+                        <button
+                          key={lang.code}
+                          onClick={() => {
+                            updatePAD({ primaryLanguage: lang.code });
+                            speak(`System translated and adapted to ${lang.name} in real-time.`);
+                          }}
+                          className={`w-full p-4 flex items-center justify-between text-left hover:bg-white/5 transition-all outline-none ${isSelected ? 'bg-ableTeal/20 border-l-4 border-ableTeal' : ''}`}
+                        >
+                          <div className="space-y-0.5">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-black text-white">{lang.name}</span>
+                              <span className="text-[8px] font-black text-white/30 uppercase tracking-wider bg-white/5 px-1.5 py-0.5 rounded">
+                                {lang.region}
+                              </span>
+                            </div>
+                            <p className="text-[10px] font-bold text-white/60">{lang.nativeName}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[8px] font-mono text-white/30">{lang.code.toUpperCase()}</span>
+                            {isSelected ? (
+                              <span className="text-ableTeal font-black text-xs">✓ Selected</span>
+                            ) : (
+                              <span className="text-white/20 text-xs font-all uppercase tracking-wider text-[10px]">Tap</span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <div className="p-8 text-center space-y-2">
+                      <span className="text-2xl block">🌐</span>
+                      <p className="text-xs font-black text-white/40 uppercase">No matching languages found</p>
+                      <p className="text-[10px] text-white/20 font-medium">Try typing standard languages like Spanish, Hindi, or Arabic.</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </section>

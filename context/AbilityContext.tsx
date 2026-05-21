@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef } from 'react';
 import { PAD, VisualAbility, VisionNeed, CognitiveMode, VoicePreference, ColorPalette, UserRole, Task, Notification, TaskPriority } from '../types';
 import { DEFAULT_PAD } from '../constants';
+import { TRANSLATIONS, getBaseLanguageKey, adaptToDialect } from '../data/translations';
 
 interface User {
   id: string;
@@ -19,6 +20,7 @@ interface AbilityContextType {
   speak: (text: string) => void;
   saveMessage: (message: any) => void;
   resetChat: () => void;
+  t: (text: string) => string;
   // Auth State
   user: User | null;
   login: (email: string, password: string) => boolean;
@@ -202,7 +204,7 @@ export const AbilityProvider: React.FC<{ children: ReactNode }> = ({ children })
       setUser(newUser);
       addNotification({
         title: 'Welcome back!',
-        message: `Logged in as ${foundUser.name}. System adapted to your Ability DNA.`,
+        message: `Logged in as ${foundUser.name}. System adapted to your accessibility settings.`,
         type: 'success'
       });
       return true;
@@ -415,10 +417,24 @@ export const AbilityProvider: React.FC<{ children: ReactNode }> = ({ children })
     pad.cognitive === CognitiveMode.Simplified ? 'simplified' : 
     pad.cognitive === CognitiveMode.HighFocus ? 'high-focus' : 'standard';
 
+  const t = useCallback((text: string): string => {
+    if (!text) return '';
+    const langCode = pad.primaryLanguage || 'english-standard';
+    const baseLang = getBaseLanguageKey(langCode);
+    const key = text.toUpperCase();
+    const entry = TRANSLATIONS[key] || Object.entries(TRANSLATIONS).find(([k]) => k.toUpperCase() === key)?.[1];
+    
+    let translated = text;
+    if (entry) {
+      translated = entry[baseLang] || entry['en'] || text;
+    }
+    return adaptToDialect(translated, langCode);
+  }, [pad.primaryLanguage]);
+
   return (
     <AbilityContext.Provider value={{ 
       pad, updatePAD, isHighContrast, toggleHighContrast, uiIntensity, speak,
-      saveMessage, resetChat,
+      saveMessage, resetChat, t,
       user, login, register, logout, updateUser, isLoggedIn: !!user,
       aiEmotion, triggerAiReaction,
       tasks, addTask, updateTask, deleteTask,
