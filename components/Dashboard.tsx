@@ -20,12 +20,13 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab, onEmergency }) => {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length === 4) {
           return parsed.map((b: any) => {
-            if (b.tab === 'career') {
+            if (b.tab === 'career' || b.tab === 'dna') {
               return {
                 ...b,
                 id: 'skin',
-                label: 'Fist of Empowerment: Job & Career Growth',
-                icon: '✊',
+                label: 'Accessibility DNA settings',
+                icon: '🧬',
+                tab: 'dna'
               };
             }
             return b;
@@ -36,10 +37,10 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab, onEmergency }) => {
       }
     }
     return [
-      { id: 'eye', label: 'Eye Symbol: Open Camera Helper', desc: 'Touch to look around. Let ABLE describe what is in front of the camera.', icon: '👁️', color: 'border-ableTeal text-ableTeal bg-ableTeal/5 hover:bg-ableTeal/10 shadow-ableTeal/20', tab: 'vision' },
-      { id: 'tongue', label: 'Tongue Symbol: Communication & Chat', desc: 'Touch to talk with ABLE helper. Open your personal speech portal.', icon: '👅', color: 'border-ablePurple text-ablePurple bg-ablePurple/5 hover:bg-ablePurple/10 shadow-ablePurple/20', tab: 'voice' },
-      { id: 'skin', label: 'Fist of Empowerment: Job & Career Growth', desc: 'Touch to discover hand-friendly roles, helpers, and career pathways.', icon: '✊', color: 'border-emerald-500 text-emerald-500 bg-emerald-500/5 hover:bg-emerald-500/10 shadow-emerald-500/20', tab: 'career' },
-      { id: 'hand', label: 'Hand Symbol: Speed SOS Support', desc: 'Touch to launch the emergency beacon. Instantly signals your trusted contacts.', icon: '🖐️', color: 'border-ableRed text-ableRed bg-ableRed/5 hover:bg-ableRed/10 shadow-ableRed/20', tab: 'sos' }
+      { id: 'eye', label: 'Adaptive Ability Analyzer', desc: 'Touch to analyze symptoms/conditions and automatically configure optimal adjustments.', icon: '🧠', color: 'border-ableTeal text-ableTeal bg-ableTeal/5 hover:bg-ableTeal/10 shadow-ableTeal/20', tab: 'vision' },
+      { id: 'tongue', label: 'Communication Terminal', desc: 'Use speech sync, voice helpers, and custom pacer interfaces.', icon: '🎙️', color: 'border-ablePurple text-ablePurple bg-ablePurple/5 hover:bg-ablePurple/10 shadow-ablePurple/20', tab: 'voice' },
+      { id: 'skin', label: 'Personal Accessibility DNA', desc: 'Configure high contrast, customized sizes, or select fine-tuned color schemes.', icon: '🧬', color: 'border-emerald-500 text-emerald-500 bg-emerald-500/5 hover:bg-emerald-500/10 shadow-emerald-500/20', tab: 'dna' },
+      { id: 'hand', label: 'Emergency Beacon SOS', desc: 'Touch to launch the rescue beacon and instantly signal emergency contacts.', icon: '🖐️', color: 'border-ableRed text-ableRed bg-ableRed/5 hover:bg-ableRed/10 shadow-ableRed/20', tab: 'sos' }
     ];
   });
 
@@ -84,7 +85,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab, onEmergency }) => {
   };
 
   const themeColors = {
-    [UserRole.Specialist]: { text: 'text-ableSky', bg: 'bg-ableSky', border: 'border-ableSky/20 shadow-ableSky/20' },
+    [UserRole.Doctor]: { text: 'text-ableSky', bg: 'bg-ableSky', border: 'border-ableSky/20 shadow-ableSky/20' },
     [UserRole.Mentor]: { text: 'text-emerald-500', bg: 'bg-emerald-500', border: 'border-emerald-500/20 shadow-emerald-500/20' },
     [UserRole.User]: { text: 'text-ableTeal', bg: 'bg-ableTeal', border: 'border-ableTeal/20 shadow-ableTeal/20' },
     [UserRole.HomeMember]: { text: 'text-ablePurple', bg: 'bg-ablePurple', border: 'border-ablePurple/20 shadow-ablePurple/20' }
@@ -143,7 +144,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab, onEmergency }) => {
           ></motion.div>
           <div className="space-y-1 md:space-y-2">
             <h1 className={`text-6xl md:text-9xl font-black tracking-tighter leading-none italic uppercase ${colors.text}`}>
-              {t(user?.role === UserRole.Specialist ? 'PORTAL.' : user?.role === UserRole.Mentor ? 'GUIDE.' : 'WELCOME.')}
+              {t(user?.role === UserRole.Doctor ? 'PORTAL.' : user?.role === UserRole.Mentor ? 'GUIDE.' : 'WELCOME.')}
             </h1>
             <p className="text-[8px] md:text-xs font-black tracking-[0.4em] md:tracking-[0.8em] text-white/30 uppercase">{t("SYSTEM SYNCED")} // {user?.name}</p>
           </div>
@@ -232,7 +233,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab, onEmergency }) => {
                 {item.id === 'eye' && (
                   <div className="mt-4 flex items-center justify-center gap-2 bg-emerald-500/10 border border-emerald-500/20 py-2 rounded-xl">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                    <span className="text-[10px] font-black text-emerald-500 tracking-widest uppercase">{t("CAMERA ON-DEMAND READINESS")}</span>
+                    <span className="text-[10px] font-black text-emerald-500 tracking-widest uppercase">{t("ANALYZER READY")}</span>
                   </div>
                 )}
               </motion.div>
@@ -240,7 +241,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab, onEmergency }) => {
           </>
         )}
 
-        {user?.role === UserRole.Specialist && (
+        {user?.role === UserRole.Doctor && (
           <>
             <motion.div 
               variants={cardVariants}
@@ -258,7 +259,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab, onEmergency }) => {
               custom={2}
               className="bg-white/5 border-2 md:border-4 border-white/10 p-6 md:p-12 rounded-3xl md:rounded-huge flex flex-col justify-center space-y-4 md:space-y-6"
             >
-              <h4 className="text-[8px] md:text-xs font-black uppercase tracking-widest text-white/30">Specialist Metrics</h4>
+              <h4 className="text-[8px] md:text-xs font-black uppercase tracking-widest text-white/30">Doctor Metrics</h4>
               <div className="grid grid-cols-2 gap-4 md:gap-6">
                 <div className="p-4 md:p-6 bg-black/40 rounded-xl md:rounded-2xl">
                   <p className="text-2xl md:text-4xl font-black text-ableSky">12</p>

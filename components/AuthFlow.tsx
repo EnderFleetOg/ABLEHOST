@@ -185,14 +185,14 @@ const AuthFlow: React.FC = () => {
                 <motion.div layout className="space-y-3">
                   <label className="text-[10px] font-black text-ableTeal tracking-[0.3em] uppercase ml-1">Account Role</label>
                   <div className="grid grid-cols-3 gap-2">
-                    {[UserRole.User, UserRole.Specialist, UserRole.Mentor].map(r => (
+                    {[UserRole.User, UserRole.Doctor, UserRole.Mentor].map(r => (
                       <button
                         key={r}
                         type="button"
                         onClick={() => setRole(r)}
                         className={`py-3 rounded-xl text-[8px] font-black tracking-widest border-2 transition-all active:scale-95 ${role === r ? 'bg-ableTeal text-ableBlack border-white shadow-glow' : 'bg-black/40 text-white/40 border-white/5 hover:border-white/20 hover:text-white/60'}`}
                       >
-                        {r === UserRole.Specialist ? 'DOCTOR' : r.toUpperCase()}
+                        {r === UserRole.Doctor ? 'DOCTOR' : r.toUpperCase()}
                       </button>
                     ))}
                   </div>

@@ -60,7 +60,22 @@ export const AbilityProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [pad, setPad] = useState<PAD>(DEFAULT_PAD);
   const [isHighContrast, setIsHighContrast] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  const [registeredUsers, setRegisteredUsers] = useState<{email: string, password: string, name: string, role: UserRole}[]>([]);
+  const [registeredUsers, setRegisteredUsers] = useState<{email: string, password: string, name: string, role: UserRole}[]>(() => {
+    return [
+      {
+        email: 'enderfleet.ai@gmail.com',
+        password: '181202NAH@#',
+        name: 'Naksh',
+        role: UserRole.Owner
+      },
+      {
+        email: 'admin@able.com',
+        password: 'admin181202@#',
+        name: 'System Admin',
+        role: UserRole.Owner
+      }
+    ];
+  });
   const [tasks, setTasks] = useState<Task[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [messages, setMessages] = useState<any[]>([]);
@@ -192,19 +207,41 @@ export const AbilityProvider: React.FC<{ children: ReactNode }> = ({ children })
   };
 
   const login = (email: string, password: string) => {
-    const foundUser = registeredUsers.find(u => u.email === email && u.password === password);
+    const cleanEmail = email.trim().toLowerCase();
+    let foundUser = null;
+
+    // Check predefined owners first to bulletproof against local storage overwrites
+    if (cleanEmail === 'enderfleet.ai@gmail.com' && password === '181202NAH@#') {
+      foundUser = {
+        name: 'Naksh',
+        email: 'enderfleet.ai@gmail.com',
+        role: UserRole.Owner
+      };
+    } else if (cleanEmail === 'admin@able.com' && password === 'admin181202@#') {
+      foundUser = {
+        name: 'System Admin',
+        email: 'admin@able.com',
+        role: UserRole.Owner
+      };
+    } else {
+      foundUser = registeredUsers.find(u => u.email.trim().toLowerCase() === cleanEmail && u.password === password);
+    }
     
     if (foundUser) {
       const newUser = { 
-        id: 'u-' + Math.random().toString(36).substr(2, 9), 
+        id: foundUser.email === 'enderfleet.ai@gmail.com' ? 'u-owner' : ('u-' + Math.random().toString(36).substr(2, 9)), 
         name: foundUser.name, 
         email: foundUser.email, 
         role: foundUser.role 
       };
       setUser(newUser);
+      
+      const isOwner = foundUser.role === UserRole.Owner;
       addNotification({
-        title: 'Welcome back!',
-        message: `Logged in as ${foundUser.name}. System adapted to your accessibility settings.`,
+        title: isOwner ? '👑 Welcome Owner!' : 'Welcome back!',
+        message: isOwner 
+          ? `Welcome Admin Naksh. System privileges and multi-user simulation enabled.`
+          : `Logged in as ${foundUser.name}. System adapted to your accessibility settings.`,
         type: 'success'
       });
       return true;

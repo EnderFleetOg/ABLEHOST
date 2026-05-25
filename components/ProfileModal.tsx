@@ -80,7 +80,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-white/40">System Role</label>
                 <div className="grid grid-cols-2 gap-2">
-                  {[UserRole.User, UserRole.Mentor, UserRole.Specialist, UserRole.HomeMember].map(role => (
+                  {[UserRole.User, UserRole.Mentor, UserRole.Doctor, UserRole.HomeMember].map(role => (
                     <button
                       key={role}
                       onClick={() => setFormData({ ...formData, role })}

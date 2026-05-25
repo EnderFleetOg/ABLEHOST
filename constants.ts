@@ -43,7 +43,7 @@ export const MOCK_CIRCLE: (CircleMember & { isMentor?: boolean })[] = [
   {
     id: 'c2',
     name: 'Dr. Aris',
-    role: UserRole.Specialist,
+    role: UserRole.Doctor,
     specialty: 'Vision Adaptation',
     avatar: '👨‍⚕️',
     isOnline: false,

@@ -12,6 +12,7 @@
   "dependencies": {
     "@google/genai": "^1.38.0",
     "@vis.gl/react-google-maps": "^1.8.3",
+    "firebase": "^12.13.0",
     "motion": "^12.38.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.2.3",

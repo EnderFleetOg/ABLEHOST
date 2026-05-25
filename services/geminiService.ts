@@ -1,91 +1,66 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { PAD, CareerPath, LocationSimulation } from "../types";
+import { PAD, AbilityProfile } from "../types";
 
 // Helper to get a fresh instance of the Gemini API client
 const getAi = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 /**
- * Suggests career paths based on user's accessibility profile and interests.
- * Uses gemini-3-pro-preview for complex reasoning tasks.
+ * Analyzes user-described disabilities/symptoms and returns a tailored AbilityProfile configuration.
  */
-export const getCareerGuidance = async (pad: PAD, interests: string): Promise<CareerPath[]> => {
+export const analyzeAbilityProfile = async (description: string): Promise<AbilityProfile> => {
   const ai = getAi();
   const response = await ai.models.generateContent({
-    model: 'gemini-3-pro-preview',
-    contents: `Suggest 3 career paths for a person with this Personal Accessibility DNA (PAD): ${JSON.stringify(pad)} and these interests: "${interests}". 
+    model: 'gemini-3.5-flash',
+    contents: `Analyze the following description of a user's disabilities, medical conditions, symptoms, or accessibility challenges, and generate a customized Personal Accessibility Profile to configure their adaptive operating system:
+    
+    "${description}"
+    
     CRITICAL INSTRUCTIONS:
-    1. Use VERY SIMPLE ENGLISH (Grade 4 level/Primary school level). No complex words or metaphors.
-    2. Response must be "Ability-First": Explain why their perspective is a professional advantage.
-    3. Be extremely concise: STRICTLY 1-2 sentences per role.
-    4. Persona: Supportive, humanoid, and warm. NEVER use AI jargon or robot-talk.
-    Return a JSON array of objects with the specified schema properties.`,
+    1. Infer the correct VisualAbility, SpeechStyle, CognitiveMode, HearingNeed, and VisionNeed based on descriptions.
+    2. Suggest highContrast (boolean) and largeText (boolean) adjustments.
+    3. Suggest speechRate (number between 0.5 for slow, to 1.5 for fast. Normal is 1.0).
+    4. Provide a warm, emotionally supportive, highly humanoid explanation outlining why these settings were selected, and encouraging the user. Under 3 sentences. No AI jargon or robot-talk.
+    5. Be extremely precise and mapping to the exact enum values:
+       - VisualAbility: 'standard', 'blurry', 'low-contrast', 'partial-blindness'
+       - SpeechStyle: 'standard', 'stutter-aware', 'frequent-pauses', 'non-verbal'
+       - CognitiveMode: 'standard', 'simplified', 'high-focus'
+       - HearingNeed: 'standard', 'hard-of-hearing', 'deaf'
+       - VisionNeed: 'standard', 'low-vision', 'blind'`,
     config: {
       responseMimeType: "application/json",
       responseSchema: {
-        type: Type.ARRAY,
-        items: {
-          type: Type.OBJECT,
-          properties: {
-            title: { type: Type.STRING },
-            compatibility: { type: Type.NUMBER },
-            description: { type: Type.STRING },
-            skills: { 
-              type: Type.ARRAY, 
-              items: { type: Type.STRING } 
-            },
-            visualAlternativeNeeded: { type: Type.BOOLEAN },
-            speechSupportLevel: { 
-              type: Type.STRING,
-              description: "Must be 'low', 'medium', or 'high'."
-            }
-          },
-          required: ["title", "compatibility", "description", "skills", "visualAlternativeNeeded", "speechSupportLevel"]
-        }
+        type: Type.OBJECT,
+        properties: {
+          visual: { type: Type.STRING, description: "Must be standard, blurry, low-contrast, or partial-blindness" },
+          speech: { type: Type.STRING, description: "Must be standard, stutter-aware, frequent-pauses, or non-verbal" },
+          cognitive: { type: Type.STRING, description: "Must be standard, simplified, or high-focus" },
+          hearing: { type: Type.STRING, description: "Must be standard, hard-of-hearing, or deaf" },
+          vision: { type: Type.STRING, description: "Must be standard, low-vision, or blind" },
+          largeText: { type: Type.BOOLEAN },
+          highContrast: { type: Type.BOOLEAN },
+          speechRate: { type: Type.NUMBER, description: "Between 0.5 and 1.5" },
+          explanation: { type: Type.STRING, description: "Under 3 sentences, warm, human" }
+        },
+        required: ["visual", "speech", "cognitive", "hearing", "vision", "largeText", "highContrast", "speechRate", "explanation"]
       }
     }
   });
 
   try {
-    // Accessing .text property directly as per guidelines
-    const text = response.text || "[]";
+    const text = response.text || "{}";
     return JSON.parse(text);
   } catch (e) {
-    console.error("Failed to parse career guidance", e);
-    return [];
+    console.error("Failed to parse ability profile", e);
+    return {
+      visual: 'standard' as any,
+      speech: 'standard' as any,
+      cognitive: 'standard' as any,
+      hearing: 'standard' as any,
+      vision: 'standard' as any,
+      largeText: false,
+      highContrast: false,
+      speechRate: 1.0,
+      explanation: "We've synced your core profile. Standard channels are open."
+    };
   }
-};
-
-/**
- * Analyzes surroundings from an image for accessibility barriers and navigation info.
- */
-export const analyzeSurroundings = async (imageData: string): Promise<string> => {
-  const ai = getAi();
-  const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
-    contents: {
-      parts: [
-        { inlineData: { data: imageData.split(',')[1], mimeType: 'image/jpeg' } },
-        { text: "Describe surroundings for a person with disabilities. Identify obstacles and signage. CRITICAL: 1-2 SENTENCES MAX. Use SIMPLE SCHOOL-LEVEL ENGLISH. Supportive tone. No robot-talk." }
-      ]
-    }
-  });
-  // Accessing .text property directly
-  return response.text || "Description unavailable.";
-};
-
-/**
- * Analyzes a specific location against user's PAD DNA to provide a guided simulation.
- * Fixes the missing export error in MapModule.tsx.
- */
-export const getSimulationAnalysis = async (pad: PAD, loc: LocationSimulation): Promise<string> => {
-  const ai = getAi();
-  const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
-    contents: `Analyze the accessibility of this location: "${loc.name}" (Type: ${loc.type}) for a person with this Personal Accessibility DNA (PAD): ${JSON.stringify(pad)}. 
-    The location has features: ${loc.accessibilityFeatures.join(', ')} and potential hazards: ${loc.potentialHazards.join(', ')}.
-    Explain how their traits (${pad.visual} and ${pad.speech}) fit this place.
-    STRICTLY 1-2 SENTENCES. Use VERY SIMPLE ENGLISH (Grade 4 level). Be warm and humanoid. No metaphors or complex ideas.`,
-  });
-  // Accessing .text property directly
-  return response.text || "Simulation analysis unavailable.";
 };

@@ -821,7 +821,7 @@ export const TRANSLATIONS: TranslationMap = {
 // Map languages code to base translation key (e.g., 'eng-standard-12' -> 'en')
 export const getBaseLanguageKey = (code: string): string => {
   if (!code) return 'en';
-  const prefix = code.split('-')[0].toLowerCase();
+  const prefix = code.split('-')[0].toLowerCase().slice(0, 3);
   
   // Keep keying simplified
   const langMappings: { [key: string]: string } = {

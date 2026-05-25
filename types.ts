@@ -30,7 +30,8 @@ export enum UserRole {
   User = 'user',
   HomeMember = 'home-member',
   Mentor = 'mentor',
-  Specialist = 'specialist'
+  Doctor = 'doctor',
+  Owner = 'owner'
 }
 
 export enum VisionNeed {
@@ -144,4 +145,16 @@ export interface Notification {
   timestamp: number;
   read: boolean;
   link?: string;
+}
+
+export interface AbilityProfile {
+  visual: VisualAbility;
+  speech: SpeechStyle;
+  cognitive: CognitiveMode;
+  hearing: HearingNeed;
+  vision: VisionNeed;
+  largeText: boolean;
+  highContrast: boolean;
+  speechRate: number;
+  explanation: string;
 }

@@ -31,7 +31,14 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab, onEmer
 
   const roleTabs = useMemo(() => {
     switch (user?.role) {
-      case UserRole.Specialist:
+      case UserRole.Owner:
+        return [
+          { id: 'dashboard', label: 'HUB', icon: '👑' },
+          { id: 'users', label: 'SIM LOGS', icon: '📋' },
+          { id: 'system', label: 'SYS DIAGS', icon: '⚙️' },
+          { id: 'dna', label: 'ABILITIES', icon: '🧬' }
+        ];
+      case UserRole.Doctor:
         return [
           { id: 'dashboard', label: 'HUB', icon: '🏥' },
           { id: 'patients', label: 'PATIENTS', icon: '📋' },
@@ -46,11 +53,9 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab, onEmer
       default:
         return [
           { id: 'dashboard', label: 'HOME', icon: '🏠' },
-          { id: 'vision', label: 'VISION', icon: '👁️' },
+          { id: 'vision', label: 'ANALYZER', icon: '🧠' },
           { id: 'voice', label: 'COMM', icon: '🎙️' },
-          { id: 'explorer', label: 'EXPLORE', icon: '🗺️' },
           { id: 'market', label: 'SHOP', icon: '🛒' },
-          { id: 'career', label: 'GROWTH', icon: '✊' },
           { id: 'dna', label: 'ABILITIES', icon: '🧬' }
         ];
     }
@@ -102,7 +107,8 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab, onEmer
   }, [handleVoiceCommand]);
 
   const themeColor = useMemo(() => {
-    if (user?.role === UserRole.Specialist) return 'border-ableSky text-ableSky';
+    if (user?.role === UserRole.Owner) return 'border-amber-500 text-amber-500';
+    if (user?.role === UserRole.Doctor) return 'border-ableSky text-ableSky';
     if (user?.role === UserRole.Mentor) return 'border-emerald-500 text-emerald-500';
     return 'border-[var(--able-primary)] text-[var(--able-primary)]';
   }, [user?.role]);
@@ -130,14 +136,14 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab, onEmer
         <div className="flex-1 max-w-[120px] sm:max-w-xs mx-1 md:mx-4 relative group flex items-center gap-1 md:gap-2">
           <div className="relative flex-1">
             <div className="absolute inset-y-0 left-0 pl-2 md:pl-3 flex items-center pointer-events-none">
-              <svg className={`h-3 w-3 md:h-4 md:w-4 text-white/20 transition-colors ${user?.role === UserRole.Specialist ? 'group-focus-within:text-ableSky' : 'group-focus-within:text-[var(--able-primary)]'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <svg className={`h-3 w-3 md:h-4 md:w-4 text-white/20 transition-colors ${user?.role === UserRole.Doctor ? 'group-focus-within:text-ableSky' : user?.role === UserRole.Owner ? 'group-focus-within:text-amber-500' : 'group-focus-within:text-[var(--able-primary)]'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
             <input 
               type="text" 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t("Search") + "..."}
-              className={`w-full bg-white/5 border border-white/10 rounded-lg md:rounded-xl py-1.5 md:py-2 pl-7 md:pl-10 pr-2 md:pr-3 text-[10px] md:text-xs font-black text-white placeholder-white/20 outline-none transition-all ${user?.role === UserRole.Specialist ? 'focus:border-ableSky' : 'focus:border-[var(--able-primary)]'} focus:bg-white/10`}
+              className={`w-full bg-white/5 border border-white/10 rounded-lg md:rounded-xl py-1.5 md:py-2 pl-7 md:pl-10 pr-2 md:pr-3 text-[10px] md:text-xs font-black text-white placeholder-white/20 outline-none transition-all ${user?.role === UserRole.Doctor ? 'focus:border-ableSky' : user?.role === UserRole.Owner ? 'focus:border-amber-500' : 'focus:border-[var(--able-primary)]'} focus:bg-white/10`}
             />
           </div>
           <button 
@@ -231,7 +237,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab, onEmer
               {activeTab === tab.id && (
                 <motion.div 
                   layoutId="active-tab"
-                  className={`absolute inset-0 ${user?.role === UserRole.Specialist ? 'bg-ableSky' : user?.role === UserRole.Mentor ? 'bg-emerald-500' : 'bg-[var(--able-primary)]'} rounded-xl md:rounded-2xl shadow-glow border-2 border-white`}
+                  className={`absolute inset-0 ${user?.role === UserRole.Doctor ? 'bg-ableSky' : user?.role === UserRole.Mentor ? 'bg-emerald-500' : user?.role === UserRole.Owner ? 'bg-amber-500 shadow-amber-500/50' : 'bg-[var(--able-primary)]'} rounded-xl md:rounded-2xl shadow-glow border-2 border-white`}
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
               )}

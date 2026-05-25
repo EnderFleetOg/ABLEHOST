@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAbility } from '../context/AbilityContext';
-import SignLanguageAvatar from './SignLanguageAvatar';
 import EmergencyQR from './EmergencyQR';
 
 interface EmergencySystemProps {
@@ -216,7 +215,11 @@ const EmergencySystem: React.FC<EmergencySystemProps> = ({ onClose }) => {
                   </div>
                   <div className="flex flex-col items-center justify-center bg-white/5 rounded-huge p-8">
                     <div className="w-full max-w-sm">
-                      <SignLanguageAvatar message="Emergency detected. Helping is on the way." active={true} />
+                      <div className="text-center p-8 border-4 border-dashed border-white/20 rounded-huge inline-block w-full text-white/40">
+                        <p className="text-6xl mb-4">🤟</p>
+                        <p className="text-xs font-black uppercase tracking-widest text-emerald-400">Sign Language Protocol Stream</p>
+                        <p className="text-xl font-bold text-white leading-relaxed mt-4 italic">"Emergency detected. Help is on the way."</p>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -34,7 +34,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
             <div className="grid grid-cols-1 gap-6">
               {[
                 { id: UserRole.User, label: 'USER', icon: '👤', desc: 'Personal accessibility explorer' },
-                { id: UserRole.Specialist, label: 'DOCTOR', icon: '🩺', desc: 'Expert medical specialist' },
+                { id: UserRole.Doctor, label: 'DOCTOR', icon: '🩺', desc: 'Expert medical specialist' },
                 { id: UserRole.Mentor, label: 'MENTOR', icon: '🫂', desc: 'Professional guidance' }
               ].map(r => (
                 <button 
@@ -97,7 +97,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                   </div>
                 </div>
               </>
-            ) : role === UserRole.Specialist ? (
+            ) : role === UserRole.Doctor ? (
               <>
                 <h2 className="text-4xl font-black text-center text-ableSky italic uppercase tracking-tighter">Medical Credentials.</h2>
                 <div className="space-y-8 bg-white/5 p-10 rounded-huge border-4 border-white/10">
@@ -139,7 +139,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                   onComplete(role);
                 }} 
                 className={`flex-1 py-8 rounded-huge font-black text-xl shadow-huge transition-all active:scale-95 ${
-                  role === UserRole.Specialist ? 'bg-ableSky text-white' : 
+                  role === UserRole.Doctor ? 'bg-ableSky text-white' : 
                   role === UserRole.Mentor ? 'bg-emerald-500 text-white' : 
                   'bg-white text-ableBlack'
                 }`}

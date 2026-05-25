@@ -105,16 +105,21 @@ const REGIONAL_VARIETIES = [
 // Generate exactly 1050 languages in a deterministic, robust fashion
 const generateLanguages = (): Language[] => {
   const result: Language[] = [];
+  const seenCodes = new Set<string>();
 
   // 1. Add some premium manually-tailored combinations
   BASE_LANGS.forEach((lang) => {
     const slug = lang.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-    result.push({
-      code: `${slug}-standard`,
-      name: `${lang.name} (Global Standard)`,
-      nativeName: `${lang.native} (Standard)`,
-      region: lang.region
-    });
+    const code = `${slug}-standard`;
+    if (!seenCodes.has(code)) {
+      seenCodes.add(code);
+      result.push({
+        code: code,
+        name: `${lang.name} (Global Standard)`,
+        nativeName: `${lang.native} (Standard)`,
+        region: lang.region
+      });
+    }
   });
 
   // 2. Generate systematic variations to cover the "1000+ languages and dialects" requirement
@@ -127,12 +132,15 @@ const generateLanguages = (): Language[] => {
       const variety = REGIONAL_VARIETIES[id % REGIONAL_VARIETIES.length];
       const code = `${slug}-${variety.loc.toLowerCase()}-${id}`;
       
-      result.push({
-        code,
-        name: `${lang.name} (${variety.suffix} - Var #${id})`,
-        nativeName: `${lang.native} (${variety.loc})`,
-        region: lang.region
-      });
+      if (!seenCodes.has(code)) {
+        seenCodes.add(code);
+        result.push({
+          code,
+          name: `${lang.name} (${variety.suffix} - Var #${id})`,
+          nativeName: `${lang.native} (${variety.loc})`,
+          region: lang.region
+        });
+      }
 
       id++;
     }
