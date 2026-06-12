@@ -95,6 +95,46 @@ export interface CircleMember {
   needsMet: string[];
 }
 
+export interface CareCirclePermission {
+  memberId: string;
+  viewProgress: boolean;
+  viewGoals: boolean;
+  viewAiInsights: boolean;
+  viewWellBeing: boolean;
+  viewSupportPlans: boolean;
+  viewUpdates: boolean;
+}
+
+export interface CareCircleMember {
+  id: string;
+  name: string;
+  email: string;
+  role: 'parent' | 'caregiver' | 'mentor' | 'teacher' | 'doctor' | 'healthcare';
+  avatar: string;
+  isOnline: boolean;
+  status: 'pending' | 'accepted';
+  inviteLink: string;
+  joinedAt: string;
+  permissions: CareCirclePermission;
+}
+
+export interface ActivityLog {
+  id: string;
+  timestamp: number;
+  memberName: string;
+  role: string;
+  action: string;
+  details: string;
+}
+
+export interface AiMemory {
+  id: string;
+  category: 'Disability' | 'Anxiety' | 'Goal' | 'Preference' | 'Accessibility' | 'Health' | 'Past Conversation';
+  content: string;
+  createdAt: string;
+  isApproved: boolean;
+}
+
 export interface CareerPath {
   title: string;
   compatibility: number;

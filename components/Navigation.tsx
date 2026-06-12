@@ -50,6 +50,11 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab, onEmer
           { id: 'mentees', label: 'MENTEES', icon: '👥' },
           { id: 'sync', label: 'SYNC', icon: '🧬' }
         ];
+      case UserRole.HomeMember:
+        return [
+          { id: 'dashboard', label: 'HUB', icon: '🏡' },
+          { id: 'consented', label: 'CLIENT SYNC', icon: '📋' }
+        ];
       default:
         return [
           { id: 'dashboard', label: 'HOME', icon: '🏠' },
@@ -110,6 +115,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab, onEmer
     if (user?.role === UserRole.Owner) return 'border-amber-500 text-amber-500';
     if (user?.role === UserRole.Doctor) return 'border-ableSky text-ableSky';
     if (user?.role === UserRole.Mentor) return 'border-emerald-500 text-emerald-500';
+    if (user?.role === UserRole.HomeMember) return 'border-ablePurple text-ablePurple';
     return 'border-[var(--able-primary)] text-[var(--able-primary)]';
   }, [user?.role]);
 

@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef } from 'react';
-import { PAD, VisualAbility, VisionNeed, CognitiveMode, VoicePreference, ColorPalette, UserRole, Task, Notification, TaskPriority } from '../types';
+import { PAD, VisualAbility, VisionNeed, CognitiveMode, VoicePreference, ColorPalette, UserRole, Task, Notification, TaskPriority, CareCircleMember, CareCirclePermission, ActivityLog, AiMemory } from '../types';
 import { DEFAULT_PAD } from '../constants';
 import { TRANSLATIONS, getBaseLanguageKey, adaptToDialect } from '../data/translations';
 
@@ -52,12 +52,297 @@ interface AbilityContextType {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   isOnline: boolean;
+
+  // Care Circle State and Handlers
+  careCircleMembers: CareCircleMember[];
+  addCareCircleMember: (member: Omit<CareCircleMember, 'id' | 'joinedAt' | 'isOnline' | 'status' | 'inviteLink' | 'permissions'>, permissions: Omit<CareCirclePermission, 'memberId'>) => void;
+  updateCareCircleMemberPermissions: (memberId: string, permissions: Partial<CareCirclePermission>) => void;
+  removeCareCircleMember: (id: string) => void;
+  activityLogs: ActivityLog[];
+  addActivityLog: (log: Omit<ActivityLog, 'id' | 'timestamp'>) => void;
+  
+  // AI Companion Memory State and Handlers
+  aiMemories: AiMemory[];
+  addAiMemory: (memory: Omit<AiMemory, 'id' | 'createdAt'>) => void;
+  updateAiMemory: (id: string, updates: Partial<AiMemory>) => void;
+  deleteAiMemory: (id: string) => void;
+  aiMemoryConsent: boolean;
+  setAiMemoryConsent: (consent: boolean) => void;
 }
 
 const AbilityContext = createContext<AbilityContextType | undefined>(undefined);
 
 export const AbilityProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [pad, setPad] = useState<PAD>(DEFAULT_PAD);
+
+  // Care Circle State and Handlers
+  const [careCircleMembers, setCareCircleMembers] = useState<CareCircleMember[]>(() => {
+    const saved = localStorage.getItem('able_care_circle');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    const initialPermissions: CareCirclePermission = {
+      memberId: 'm1',
+      viewProgress: true,
+      viewGoals: true,
+      viewAiInsights: true,
+      viewWellBeing: true,
+      viewSupportPlans: true,
+      viewUpdates: true
+    };
+    return [
+      {
+        id: 'm1',
+        name: 'Eleanor Moore',
+        email: 'eleanor.moore@gmail.com',
+        role: 'caregiver',
+        avatar: '👩',
+        isOnline: true,
+        status: 'accepted',
+        inviteLink: 'https://ais-pre-qwtlmce7spswpzy2snw4ov-42391477966.asia-southeast1.run.app/invite/m1',
+        joinedAt: '2026-05-10',
+        permissions: initialPermissions
+      },
+      {
+        id: 'm2',
+        name: 'Dr. Aris Vance',
+        email: 'aris.vance@neurohealth.org',
+        role: 'doctor',
+        avatar: '👨‍⚕️',
+        isOnline: false,
+        status: 'accepted',
+        inviteLink: 'https://ais-pre-qwtlmce7spswpzy2snw4ov-42391477966.asia-southeast1.run.app/invite/m2',
+        joinedAt: '2026-05-24',
+        permissions: {
+          memberId: 'm2',
+          viewProgress: true,
+          viewGoals: true,
+          viewAiInsights: true,
+          viewWellBeing: true,
+          viewSupportPlans: true,
+          viewUpdates: true
+        }
+      },
+      {
+        id: 'm3',
+        name: 'Marcus Brody',
+        email: 'marcus.brody@academy.edu',
+        role: 'teacher',
+        avatar: '👨‍🏫',
+        isOnline: true,
+        status: 'pending',
+        inviteLink: 'https://ais-pre-qwtlmce7spswpzy2snw4ov-42391477966.asia-southeast1.run.app/invite/m3',
+        joinedAt: '2026-06-01',
+        permissions: {
+          memberId: 'm3',
+          viewProgress: true,
+          viewGoals: false,
+          viewAiInsights: false,
+          viewWellBeing: true,
+          viewSupportPlans: true,
+          viewUpdates: false
+        }
+      }
+    ];
+  });
+
+  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>(() => {
+    const saved = localStorage.getItem('able_activity_logs');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return [
+      {
+        id: 'l1',
+        timestamp: Date.now() - 3600000 * 2.5,
+        memberName: 'Eleanor Moore',
+        role: 'caregiver',
+        action: 'Viewed Well-being Trends',
+        details: 'Accessed mood, stress level, and activity compliance logs.'
+      },
+      {
+        id: 'l2',
+        timestamp: Date.now() - 3600000 * 18,
+        memberName: 'Dr. Aris Vance',
+        role: 'doctor',
+        action: 'Analyzed AI Insights',
+        details: 'Reviewed synthesized profile adaptations for Glaucoma management.'
+      }
+    ];
+  });
+
+  const [aiMemories, setAiMemories] = useState<AiMemory[]>(() => {
+    const saved = localStorage.getItem('able_ai_memories');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return [
+      {
+        id: 'mem1',
+        category: 'Disability',
+        content: 'Diagnosed with early-stage Glaucoma; reports central visual blurriness and blind spots in high-brightness layouts.',
+        createdAt: '2026-06-01T12:00:00Z',
+        isApproved: true
+      },
+      {
+        id: 'mem2',
+        category: 'Accessibility',
+        content: 'Has partial hearing loss in right ear. Prefers left-heavy audio channels or transcripts for critical voice communications.',
+        createdAt: '2026-06-02T15:30:00Z',
+        isApproved: true
+      },
+      {
+        id: 'mem3',
+        category: 'Anxiety',
+        content: 'Experiences elevated anxiety peaks (8/10) when managing more than five simultaneous active tasks on the taskboard.',
+        createdAt: '2026-06-04T10:15:00Z',
+        isApproved: true
+      },
+      {
+        id: 'mem4',
+        category: 'Preference',
+        content: 'Prefers ultra-calm female vocal pacing (0.9 speed) for reading instructions and system summaries.',
+        createdAt: '2026-06-07T09:45:00Z',
+        isApproved: true
+      },
+      {
+        id: 'mem5',
+        category: 'Goal',
+        content: 'Aims to independent-coach herself to design clean visual compositions with High Contrast tools by late July.',
+        createdAt: '2026-06-09T14:20:00Z',
+        isApproved: true
+      }
+    ];
+  });
+
+  const [aiMemoryConsent, setAiMemoryConsent] = useState<boolean>(() => {
+    const saved = localStorage.getItem('able_ai_consent');
+    return saved !== 'false';
+  });
+
+  const addCareCircleMember = (
+    member: Omit<CareCircleMember, 'id' | 'joinedAt' | 'isOnline' | 'status' | 'inviteLink' | 'permissions'>,
+    permissions: Omit<CareCirclePermission, 'memberId'>
+  ) => {
+    const id = 'm-' + Math.random().toString(36).substr(2, 9);
+    const code = Math.random().toString(36).substr(2, 8).toUpperCase();
+    const inviteLink = `https://ais-pre-qwtlmce7spswpzy2snw4ov-42391477966.asia-southeast1.run.app/invite/${id}?code=${code}`;
+    
+    const newMember: CareCircleMember = {
+      ...member,
+      id,
+      joinedAt: new Date().toISOString().split('T')[0],
+      isOnline: false,
+      status: 'pending',
+      inviteLink,
+      permissions: {
+        ...permissions,
+        memberId: id
+      }
+    };
+
+    setCareCircleMembers(prev => [...prev, newMember]);
+    addNotification({
+      title: 'Invitation Pending',
+      message: `Invite link generated for ${member.name} (${member.role}).`,
+      type: 'success'
+    });
+    
+    addActivityLog({
+      memberName: 'User (You)',
+      role: 'User',
+      action: 'Created Invitation Link',
+      details: `Generated unique role-specific entrance token for ${member.name}.`
+    });
+  };
+
+  const updateCareCircleMemberPermissions = (memberId: string, permissions: Partial<CareCirclePermission>) => {
+    setCareCircleMembers(prev => prev.map(m => {
+      if (m.id === memberId) {
+        return {
+          ...m,
+          permissions: {
+            ...m.permissions,
+            ...permissions
+          }
+        };
+      }
+      return m;
+    }));
+
+    addNotification({
+      title: 'Permissions Updated',
+      message: 'Care Circle permissions saved securely.',
+      type: 'info'
+    });
+
+    addActivityLog({
+      memberName: 'User (You)',
+      role: 'User',
+      action: 'Updated Sharing Controls',
+      details: `Modified permission settings for Member ID: ${memberId}.`
+    });
+  };
+
+  const removeCareCircleMember = (id: string) => {
+    const matched = careCircleMembers.find(m => m.id === id);
+    setCareCircleMembers(prev => prev.filter(m => m.id !== id));
+    addNotification({
+      title: 'Member Removed',
+      message: `Connection with ${matched ? matched.name : 'member'} severed.`,
+      type: 'warning'
+    });
+
+    addActivityLog({
+      memberName: 'User (You)',
+      role: 'User',
+      action: 'Severed Circle Sync',
+      details: `Revoked access tokens for ${matched ? matched.name : id}.`
+    });
+  };
+
+  const addActivityLog = (log: Omit<ActivityLog, 'id' | 'timestamp'>) => {
+    const newLog: ActivityLog = {
+      ...log,
+      id: 'l-' + Math.random().toString(36).substr(2, 9),
+      timestamp: Date.now()
+    };
+    setActivityLogs(prev => [newLog, ...prev]);
+  };
+
+  const addAiMemory = (memory: Omit<AiMemory, 'id' | 'createdAt'>) => {
+    const newMemory: AiMemory = {
+      ...memory,
+      id: 'mem-' + Math.random().toString(36).substr(2, 9),
+      createdAt: new Date().toISOString()
+    };
+    setAiMemories(prev => [newMemory, ...prev]);
+  };
+
+  const updateAiMemory = (id: string, updates: Partial<AiMemory>) => {
+    setAiMemories(prev => prev.map(m => m.id === id ? { ...m, ...updates } : m));
+  };
+
+  const deleteAiMemory = (id: string) => {
+    setAiMemories(prev => prev.filter(m => m.id !== id));
+  };
+
+  useEffect(() => {
+    localStorage.setItem('able_care_circle', JSON.stringify(careCircleMembers));
+  }, [careCircleMembers]);
+
+  useEffect(() => {
+    localStorage.setItem('able_activity_logs', JSON.stringify(activityLogs));
+  }, [activityLogs]);
+
+  useEffect(() => {
+    localStorage.setItem('able_ai_memories', JSON.stringify(aiMemories));
+  }, [aiMemories]);
+
+  useEffect(() => {
+    localStorage.setItem('able_ai_consent', JSON.stringify(aiMemoryConsent));
+  }, [aiMemoryConsent]);
+
   const [isHighContrast, setIsHighContrast] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [registeredUsers, setRegisteredUsers] = useState<{email: string, password: string, name: string, role: UserRole}[]>(() => {
@@ -478,7 +763,11 @@ export const AbilityProvider: React.FC<{ children: ReactNode }> = ({ children })
       notifications, addNotification, markNotificationRead, clearNotifications,
       searchQuery, setSearchQuery, messages, sendMessage,
       suggestion, setSuggestion, activeTab, setActiveTab,
-      isOnline
+      isOnline,
+      careCircleMembers, addCareCircleMember, updateCareCircleMemberPermissions, removeCareCircleMember,
+      activityLogs, addActivityLog,
+      aiMemories, addAiMemory, updateAiMemory, deleteAiMemory,
+      aiMemoryConsent, setAiMemoryConsent
     }}>
       <div className={`min-h-screen w-full transition-all duration-500 ${isHighContrast ? 'dark' : ''}`}>
         {children}

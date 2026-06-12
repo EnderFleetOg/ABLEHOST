@@ -324,6 +324,67 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab, onEmergency }) => {
         </motion.div>
       )}
 
+      {user?.role === UserRole.User && (
+        <motion.div 
+          variants={cardVariants}
+          custom={3.5}
+          className="space-y-6 pt-6"
+        >
+          <div className="flex items-center space-x-3 text-ableTeal font-black tracking-[0.25em] uppercase text-[10px] text-left">
+            <span className="w-10 h-1 bg-ableTeal rounded-full shadow-[0_0_10px_#2DD4BF]" />
+            <span>SUPPORT & COMPANION NETWORKS</span>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+            {/* Care Circle Entry */}
+            <button
+              onClick={() => {
+                if (setActiveTab) {
+                  setActiveTab('circle');
+                  speak("Accessing Care Circle. Active synchronization feeds are online.");
+                }
+              }}
+              className="bg-ableBlack border-4 md:border-8 border-ablePurple/30 text-white p-6 md:p-10 rounded-3xl md:rounded-huge shadow-huge hover:border-ablePurple transition-all flex flex-col justify-between items-start text-left relative overflow-hidden group active:scale-[0.99]"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-purple-500/10 transition-all duration-700"></div>
+              <span className="text-5xl md:text-6xl duration-300 transform group-hover:scale-105 mb-4">🤝</span>
+              <div className="space-y-2 relative z-10">
+                <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tighter italic text-ablePurple">
+                  Care Circle
+                </h3>
+                <p className="text-sm md:text-base font-bold text-white/70 leading-snug">
+                  Invite trusted family, caregivers, mentors, or clinical doctors. Authorize granular sharing constraints and monitor access logs.
+                </p>
+                <div className="pt-2 text-[9px] font-black text-ablePurple tracking-widest uppercase">OPEN PRIVACY FEED →</div>
+              </div>
+            </button>
+
+            {/* AI Companion Entry */}
+            <button
+              onClick={() => {
+                if (setActiveTab) {
+                  setActiveTab('ai');
+                  speak("Opening AI Memory Companion. Direct neural synaptic links ready.");
+                }
+              }}
+              className="bg-ableBlack border-4 md:border-8 border-ableTeal/30 text-white p-6 md:p-10 rounded-3xl md:rounded-huge shadow-huge hover:border-ableTeal transition-all flex flex-col justify-between items-start text-left relative overflow-hidden group active:scale-[0.99]"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-ableTeal/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-ableTeal/10 transition-all duration-700"></div>
+              <span className="text-5xl md:text-6xl duration-300 transform group-hover:scale-105 mb-4 font-normal">🧠</span>
+              <div className="space-y-2 relative z-10">
+                <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tighter italic text-ableTeal">
+                  Memory Companion
+                </h3>
+                <p className="text-sm md:text-base font-bold text-white/70 leading-snug">
+                  Interact with ABLE Core, an AI Companion that securely memorizes your physical constraints, anxiety limits, and daily milestones to personalize daily workflows.
+                </p>
+                <div className="pt-2 text-[9px] font-black text-ableTeal tracking-widest uppercase">SYNC COMPANION LINKS →</div>
+              </div>
+            </button>
+          </div>
+        </motion.div>
+      )}
+
       <motion.div 
         variants={cardVariants}
         custom={4}

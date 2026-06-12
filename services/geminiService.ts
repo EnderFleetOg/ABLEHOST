@@ -64,3 +64,95 @@ export const analyzeAbilityProfile = async (description: string): Promise<Abilit
     };
   }
 };
+
+/**
+ * Handles companion conversations with active knowledge of user memory cards.
+ */
+export const generateCompanionResponse = async (
+  messages: { role: 'user' | 'assistant'; content: string }[],
+  memories: string[],
+  padSettings?: any
+): Promise<string> => {
+  const ai = getAi();
+  
+  const formattedMemories = memories.length > 0 
+    ? memories.map((m, i) => `${i + 1}. [${m}]`).join('\n')
+    : "No structured memories stored yet. Treat this as a fresh connection.";
+
+  const visualTone = padSettings?.visual || 'standard';
+  const cognitiveTone = padSettings?.cognitive || 'standard';
+
+  const systemInstructions = `You are "ABLE AI Core", an empathetic, highly specialized Life Companion for individuals with diverse physical, sensory, or neurological abilities.
+  
+  CRITICAL HISTORICAL CONTEXT (ALWAYS INCORPORATE AND RESPECT THESE MEMORIES):
+  ${formattedMemories}
+  
+  SYSTEM INTERFACE STATUS:
+  - User Visual Ability: ${visualTone}
+  - User Cognitive Level: ${cognitiveTone}
+  
+  CORE INTERACTION MANDATES:
+  1. DO NOT exceed three sentences. Be concise, direct, and emotionally supportive.
+  2. If user memories specify a struggle (e.g. anxiety with tasks, trouble seeing, glaucoma), adapt your response (e.g. check on them, suggest simpler paces, remind them they have support). Refer back to past details naturally.
+  3. Keep the tone loving, humanoid, and warm. Avoid terms like "As an AI..." or "Based on my memory..." Speak like a trusted physical mentor.
+  4. Frequently ask supportive or clarifying follow-up questions regarding their well-being, goals, or progress relative to their memories.`;
+
+  // Format conversion
+  const contents = messages.map(m => ({
+    role: m.role,
+    parts: [{ text: m.content }]
+  }));
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.5-flash',
+      contents: contents as any,
+      config: {
+        systemInstruction: systemInstructions
+      }
+    });
+    return response.text || "I am here with you. Your sync channels are perfectly active.";
+  } catch (err) {
+    console.error("Failed to generate companion response", err);
+    return "I am right here with you. Synaptic connection is steady. What shall we focus on together?";
+  }
+};
+
+/**
+ * Parses user input to check if they shared a new memory candidate (e.g., goal, preference, condition).
+ */
+export const detectMemoryInsight = async (
+  userMessage: string
+): Promise<{ detected: boolean; category?: string; content?: string; confidenceExplanation?: string } | null> => {
+  const ai = getAi();
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.5-flash',
+      contents: `Analyze this conversational message from an accessible platform user. Determine if they are stating a personal challenge, symptom, health status, anxiety, life goal, preference, or accessibility requirement they'd want their AI companion to remember:
+      
+      "${userMessage}"
+      
+      Return JSON if a clear personal attribute, goal, difficulty, or constraint has been declared. Categories: 'Disability' | 'Anxiety' | 'Goal' | 'Preference' | 'Accessibility' | 'Health' | 'Past Conversation'
+      
+      Only set "detected" to true if there is a concrete, clear personal fact worth saving.`,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            detected: { type: Type.BOOLEAN },
+            category: { type: Type.STRING, description: "Must be Disability, Anxiety, Goal, Preference, Accessibility, Health, or Past Conversation" },
+            content: { type: Type.STRING, description: "Clear, concise 1-sentence summary of the fact to remember, written in 3rd person (e.g., 'User experiences anxiety under light contrast settings')" },
+            confidenceExplanation: { type: Type.STRING }
+          },
+          required: ["detected"]
+        }
+      }
+    });
+
+    return JSON.parse(response.text || "{}");
+  } catch (e) {
+    console.error("Failed to detect Memory Insight", e);
+    return null;
+  }
+};

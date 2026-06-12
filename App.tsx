@@ -16,6 +16,9 @@ import Onboarding from './components/Onboarding';
 import PredictiveAssistance from './components/PredictiveAssistance';
 import { OwnerPortal } from './components/OwnerPortal';
 import OwnerFloatingControl from './components/OwnerFloatingControl';
+import CircleOfCare from './components/CircleOfCare';
+import AICompanion from './components/AICompanion';
+import CaregiverPortal from './components/CaregiverPortal';
 
 // Redesigned Doctor Portal Component
 const DoctorPortal: React.FC<{ tab: string }> = ({ tab }) => {
@@ -262,11 +265,14 @@ const AppContent: React.FC = () => {
     if (user?.role === UserRole.Owner) return <OwnerPortal tab={activeTab} />;
     if (user?.role === UserRole.Doctor) return <DoctorPortal tab={activeTab} />;
     if (user?.role === UserRole.Mentor) return <MentorPortal tab={activeTab} />;
+    if (user?.role === UserRole.HomeMember) return <CaregiverPortal tab={activeTab} />;
 
     switch (activeTab) {
       case 'dashboard': return <Dashboard setActiveTab={setActiveTab} onEmergency={() => setShowEmergency(true)} />;
       case 'vision': return <AbilityAnalyzer />;
       case 'voice': return <CommHub />;
+      case 'circle': return <CircleOfCare />;
+      case 'ai': return <AICompanion />;
       case 'market': return <Shop />;
       case 'dna': return <PADSettings />;
       case 'info': return <InfoPage />;
@@ -278,6 +284,7 @@ const AppContent: React.FC = () => {
     if (user?.role === UserRole.Owner) return 'selection:bg-amber-500 bg-ableBlack text-white';
     if (user?.role === UserRole.Doctor) return 'selection:bg-ableSky bg-ableBlack text-white';
     if (user?.role === UserRole.Mentor) return 'selection:bg-emerald-500 bg-ableBlack text-white';
+    if (user?.role === UserRole.HomeMember) return 'selection:bg-ablePurple bg-ableBlack text-white';
     return 'selection:bg-ableTeal bg-ableBlack text-white';
   };
 
@@ -285,6 +292,7 @@ const AppContent: React.FC = () => {
     if (user?.role === UserRole.Owner) return 'bg-[radial-gradient(circle_at_50%_50%,_#F59E0B_0%,_transparent_70%)]';
     if (user?.role === UserRole.Doctor) return 'bg-[radial-gradient(circle_at_50%_50%,_#0EA5E9_0%,_transparent_70%)]';
     if (user?.role === UserRole.Mentor) return 'bg-[radial-gradient(circle_at_50%_50%,_#10B981_0%,_transparent_70%)]';
+    if (user?.role === UserRole.HomeMember) return 'bg-[radial-gradient(circle_at_50%_50%,_#A855F7_0%,_transparent_70%)]';
     return 'bg-[radial-gradient(circle_at_50%_50%,_#2DD4BF_0%,_transparent_70%)]';
   };
 
@@ -305,7 +313,7 @@ const AppContent: React.FC = () => {
                  animate={{ opacity: 1, x: 0 }}
                  className="flex items-center gap-3 md:gap-4 bg-white/5 px-4 md:px-6 py-2 md:py-3 rounded-2xl border border-white/10 backdrop-blur-md shadow-lg"
                >
-                 <div className={`w-2 h-2 md:w-3 md:h-3 rounded-full animate-pulse shadow-[0_0_10px_rgba(0,0,0,0.5)] ${user?.role === UserRole.Owner ? 'bg-amber-500 shadow-amber-500/50' : user?.role === UserRole.Doctor ? 'bg-ableSky shadow-ableSky/50' : user?.role === UserRole.Mentor ? 'bg-emerald-500 shadow-emerald-500/50' : 'bg-ableTeal shadow-ableTeal/50'}`}></div>
+                 <div className={`w-2 h-2 md:w-3 md:h-3 rounded-full animate-pulse shadow-[0_0_10px_rgba(0,0,0,0.5)] ${user?.role === UserRole.Owner ? 'bg-amber-500 shadow-amber-500/50' : user?.role === UserRole.Doctor ? 'bg-ableSky shadow-ableSky/50' : user?.role === UserRole.Mentor ? 'bg-emerald-500 shadow-emerald-500/50' : user?.role === UserRole.HomeMember ? 'bg-ablePurple shadow-ablePurple/50' : 'bg-ableTeal shadow-ableTeal/50'}`}></div>
                  <span className="text-[8px] md:text-[10px] font-black text-white/40 uppercase tracking-widest leading-none">
                    {user?.name} <span className="mx-1 opacity-20">//</span> {user?.role.replace('-', ' ')}
                  </span>
