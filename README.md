@@ -1,20 +1,55 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# ABLE
 
-# Run and deploy your AI Studio app
+**ABLE** is an AI-powered accessibility platform that combines communication assistance, camera-based understanding, and an adaptive interface.
 
-This contains everything you need to run your app locally.
+## Purpose
 
-View your app in AI Studio: https://ai.studio/apps/5c0e1bb9-b6b3-4d66-beb4-b8c2d941eff4
+ABLE is designed to make digital interaction more accessible for people with visual and speech-related needs while keeping assistance practical and easy to use.
 
-## Run Locally
+## Core features
 
-**Prerequisites:**  Node.js
+- Intent-first AI assistance
+- Speak-for-Me communication support
+- Live camera-based assistance
+- Adaptive accessible interface
+- Multilingual support
+- Emergency and care-focused tools
 
+## Technology stack
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+- React
+- TypeScript
+- Vite
+- Firebase
+- Gemini API
+
+## Project status
+
+**Prototype** — active development.
+
+## Run locally
+
+### Prerequisites
+
+- Node.js
+- A Gemini API key
+
+### Setup
+
+```bash
+npm install
+```
+
+Create a `.env.local` file and add:
+
+```env
+GEMINI_API_KEY=your_api_key_here
+```
+
+Then start the development server:
+
+```bash
+npm run dev
+```
+
+> Never commit real API keys or credentials to the repository.
